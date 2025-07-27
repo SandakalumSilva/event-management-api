@@ -3,7 +3,9 @@
 namespace App\Providers;
 
 use App\Interfaces\Api\AttendeeInterface;
+use App\Interfaces\Api\EventInterface;
 use App\Repositories\Api\AttendeeRepository;
+use App\Repositories\Api\EventRepository;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -13,6 +15,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
+        $this->app->bind(EventInterface::class,EventRepository::class);
         $this->app->bind(AttendeeInterface::class, AttendeeRepository::class);
     }
 
