@@ -3,47 +3,46 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Interfaces\Api\AttendeeInterface;
+use App\Models\Attendee;
+use App\Models\Event;
 use Illuminate\Http\Request;
 
 class AttendeeController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
+    protected $attendeeRepository;
+    public function __construct(AttendeeInterface $attendeeRepository)
     {
-        //
+        $this->attendeeRepository = $attendeeRepository;
+    }
+    public function index(Event $event)
+    {
+        return $this->attendeeRepository->index($event);
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(Request $request,Event $event)
     {
-        //
+        return $this->attendeeRepository->store($request,$event);
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show(Event $event,Attendee $attendee)
     {
-        //
+        return $this->attendeeRepository->show($event,$attendee);
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
     public function update(Request $request, string $id)
     {
         //
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
+    public function destroy(string $event,Attendee $attendee)
     {
-        //
+        return $this->attendeeRepository->destroy($event,$attendee);
     }
 }

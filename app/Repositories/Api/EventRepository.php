@@ -2,19 +2,29 @@
 
 namespace App\Repositories\Api;
 
+use App\Http\Resources\EventResource;
+use App\Http\Traits\CanLoadRelationships;
 use App\Models\Event;
 use App\Interfaces\Api\EventInterface;
 
 class EventRepository implements EventInterface
 {
+    use CanLoadRelationships;
     public function index()
     {
-        return Event::orderBy('id','desc')->get();
+
+        $relations = ['user', 'attendees', 'attendees.user'];
+        $query = $this->loadRelationships(Event::query(), $relations);
+
+        return EventResource::collection(
+            $query->latest()->paginate()
+        );
     }
 
     public function show($event)
     {
-        return $event;
+        $event->load('user', 'attendees');
+        return new EventResource($event);
     }
 
     public function store($request)
@@ -28,11 +38,14 @@ class EventRepository implements EventInterface
         ]);
         return response()->json([
             'message' => 'Event created successfully.',
-            'event' => $event,
+            'event' => new EventResource($event),
         ], 201);
+
+        // return new EventResource($event);
     }
 
-    public function update($request, $event){
+    public function update($request, $event)
+    {
         $event->update([
             'name' => $request->name,
             'description' => $request->description,
@@ -45,7 +58,8 @@ class EventRepository implements EventInterface
         ], 200);
     }
 
-    public function destroy($event){
+    public function destroy($event)
+    {
         $event->delete();
         return response()->json([
             'message' => 'Event deleted successfully.',
